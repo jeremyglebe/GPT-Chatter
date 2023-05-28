@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
@@ -9,6 +9,8 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./chat.page.scss'],
 })
 export class ChatPage implements OnInit {
+  @ViewChild('userInputEl')
+  userInputEl: ElementRef<HTMLTextAreaElement> | null = null;
   messages = this.api.getMessages();
   inputForm = this.fb.nonNullable.group({
     prompt: ['', Validators.required],
@@ -25,12 +27,13 @@ export class ChatPage implements OnInit {
   async submitPrompt() {
     console.log('SUBMIT: ', this.inputForm.getRawValue().prompt);
     const loading = await this.loadingController.create({
-      message: 'Hellooo',
+      message: 'GPT is thinking...',
       spinner: 'bubbles',
     });
     await loading.present();
     await this.api.getCompletion(this.inputForm.getRawValue().prompt);
     this.inputForm.setValue({ prompt: '' });
+    this.resizeUserInput();
     loading.dismiss();
   }
 
@@ -41,17 +44,27 @@ export class ChatPage implements OnInit {
     }
   }
 
-  onInput(event: any): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    
-    // Reset the height to 'auto' before recalculating the new height
-    textarea.style.height = 'auto';
-    
-    // Calculate the desired height (accounting for padding if necessary)
-    const desiredHeight = Math.min(textarea.scrollHeight, this.maxRows * parseInt(getComputedStyle(textarea).lineHeight));
-    
-    // Set the new height (increase only if the desiredHeight is greater than the current height)
-    textarea.style.height = Math.max(desiredHeight, textarea.clientHeight) + 'px';
+  onUserInput(event: any): void {
+    this.resizeUserInput();
+  }
+
+  resizeUserInput() {
+    const textarea = this.userInputEl?.nativeElement;
+
+    if (textarea) {
+      // Reset the height to 'auto' before recalculating the new height
+      textarea.style.height = 'auto';
+
+      // Calculate the desired height (accounting for padding if necessary)
+      const desiredHeight = Math.min(
+        textarea.scrollHeight,
+        this.maxRows * parseInt(getComputedStyle(textarea).lineHeight)
+      );
+
+      // Set the new height (increase only if the desiredHeight is greater than the current height)
+      textarea.style.height =
+        Math.max(desiredHeight, textarea.clientHeight) + 'px';
+    }
   }
 
   async ngOnInit() {}
