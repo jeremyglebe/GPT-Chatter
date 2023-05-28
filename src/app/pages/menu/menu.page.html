@@ -3,6 +3,7 @@
     <ion-content class="bg-gray-900 flex h-full">
       <a
         class="flex m-2 py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"
+        (click)="onNewChat()"
       >
         <ion-icon name="add" class="add-icon"></ion-icon>
         New chat</a
@@ -19,12 +20,25 @@
             <span class="px-4 m-2">Chat 1</span>
           </div>
         </div>
+
+        <div
+          *ngFor="let chat of chats"
+          button
+          routerLink="/chat"
+          class="hover:cursor-pointer bg-gray-900 text-white"
+        >
+          <div class="px-4 h-full rounded-md flex items-center">
+            <ion-icon name="chatbox-outline"></ion-icon>
+            <span class="px-4 m-2">{{chat.name}}</span>
+          </div>
+        </div>
       </ion-list>
 
       <a
         class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm"
+        (click)="onClearConversations()"
       >
-        <ion-icon name="trash-outline" style="font-size: 16px;"></ion-icon>
+        <ion-icon name="trash-outline" style="font-size: 16px"></ion-icon>
         Clear conversations
       </a>
     </ion-content>

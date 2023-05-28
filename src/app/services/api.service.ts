@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Configuration, OpenAIApi } from 'openai';
 import { BehaviorSubject } from 'rxjs';
+import { DataService } from './data.service';
 
 const configuration = new Configuration({
   apiKey: environment.OPENAI_API_KEY,
@@ -27,7 +28,7 @@ export class ApiService {
   ];
   private messages = new BehaviorSubject<Message[]>(this.starterMessages);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private data: DataService) {}
 
   async getCompletion(prompt: string) {
     const newMessage: Message = {
